@@ -10,6 +10,7 @@ public class SalarioFuncionario {
     private double salarioPorHora;
     private final int HORAS_SEMANAIS = 40;
     private final double TAXA_EXTRA = 0.5;
+    private final int SEMANAS = 4;
 
     public SalarioFuncionario(double horasTrabalhadas, double salarioPorHora) {
         this.horasTrabalhadas = horasTrabalhadas;
@@ -18,22 +19,24 @@ public class SalarioFuncionario {
 
     void imprimeResultado(){
         double salarioTotal;
-        if (horasTrabalhadas > HORAS_SEMANAIS) {
-            double horasExtras = horasTrabalhadas - HORAS_SEMANAIS;
+        double horasMesSemExtra = HORAS_SEMANAIS * SEMANAS;
+        if (horasTrabalhadas > horasMesSemExtra) {
+            double horasExtras = horasTrabalhadas - horasMesSemExtra;
             salarioTotal = (HORAS_SEMANAIS * salarioPorHora) + (horasExtras * salarioPorHora * TAXA_EXTRA);
         } else {
-            salarioTotal = horasTrabalhadas * salarioPorHora;
+            salarioTotal = (horasTrabalhadas * salarioPorHora);
         }
         System.out.println("Salário total do funcionário: " + salarioTotal);
     }
 
     public double calculaSalario(){
         double salarioTotal;
-        if (horasTrabalhadas > HORAS_SEMANAIS) {
-            double horasExtras = horasTrabalhadas - HORAS_SEMANAIS;
+        double horasMesSemExtra = HORAS_SEMANAIS * SEMANAS;
+        if (horasTrabalhadas > horasMesSemExtra) {
+            double horasExtras = horasTrabalhadas - horasMesSemExtra;
             salarioTotal = (HORAS_SEMANAIS * salarioPorHora) + (horasExtras * salarioPorHora * TAXA_EXTRA);
         } else {
-            salarioTotal = horasTrabalhadas * salarioPorHora;
+            salarioTotal = (horasTrabalhadas * salarioPorHora);
         }
         return salarioTotal;
     }

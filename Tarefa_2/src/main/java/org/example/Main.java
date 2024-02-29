@@ -106,7 +106,7 @@ public class Main {
 
         // 15)
         System.out.println("\n--------------------EX15--------------------\n");
-        System.out.println("Digite o número de horas trabalhadas no mês: ");
+        System.out.println("Digite o número de horas trabalhadas no mês(mês de 4 semanas com carga de 40 semanais): ");
         double horasTrabalhadas = scanner.nextDouble();
         System.out.println("Digite o salário por hora: ");
         double salarioPorHora = scanner.nextDouble();

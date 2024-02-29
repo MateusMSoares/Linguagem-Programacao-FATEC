@@ -129,7 +129,9 @@ public class TestesExercicios {
     @Test
     // 15)
     public void testaSalarioFuncionarioSemHoraExtra() {
-        SalarioFuncionario salarioFuncionario = new SalarioFuncionario(40, 10);
-        assertEquals(400, salarioFuncionario.calculaSalario(), 0.01);
+        SalarioFuncionario salarioFuncionario = new SalarioFuncionario(120, 10);
+        assertEquals(1200, salarioFuncionario.calculaSalario(), 0.01);
+        SalarioFuncionario salarioFuncionario1 = new SalarioFuncionario(150, 10);
+        assertEquals(1500, salarioFuncionario1.calculaSalario(), 0.01);
     }
 }
