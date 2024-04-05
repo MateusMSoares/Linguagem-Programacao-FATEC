@@ -6,8 +6,8 @@ Diagrama de classes da tarefa 3:
 
 ![Diagrama de classes](https://github.com/MateusMSoares/Linguagem-Programacao-FATEC/assets/74261014/bc599bc5-abe3-4bad-b9fb-149f9e6f870c)
 
-Telas aplicação JavaFX:
-caminho: E1/ex3_relacionamentos
+## Telas aplicação JavaFX:
+- caminho: E1/ex3_relacionamentos
 
 ### Tela de cadastro de produto:
 ![Tela de cadastro de produto](https://github.com/MateusMSoares/Linguagem-Programacao-FATEC/assets/74261014/22209fd1-0ea3-40b0-8b4a-dcc080c596e0)
