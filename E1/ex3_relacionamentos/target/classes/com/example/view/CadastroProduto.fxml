@@ -4,6 +4,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -21,6 +22,6 @@
       <TextField fx:id="campoMemoria" layoutX="226.0" layoutY="200.0" />
       <ComboBox fx:id="selecaoProduto" layoutX="226.0" layoutY="250.0" prefWidth="150.0" promptText="Escolha o produto" />
       <Button fx:id="cadastrar" layoutX="264.0" layoutY="305.0" mnemonicParsing="false" onAction="#cadastrarProduto" text="cadastrar" />
-      
+      <ImageView fx:id="imagemView" fitHeight="150.0" fitWidth="200.0" layoutX="14.0" layoutY="91.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

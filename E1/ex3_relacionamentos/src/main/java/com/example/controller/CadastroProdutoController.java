@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import java.nio.file.Paths;
+
 import com.example.model.Computador;
 import com.example.model.Livro;
 import com.example.model.Produto;
@@ -11,6 +13,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.TextField;
 
 public class CadastroProdutoController {
@@ -31,14 +35,17 @@ public class CadastroProdutoController {
     private TextField campoMemoria;
     @FXML
     private Button cadastrar;
+    @FXML
+    private ImageView imagemView;
 
     private ProdutoService produtoService;
     
-    public CadastroProdutoController() {
-    }
 
     @FXML
     public void initialize() {
+        Image imagemLivro = new Image(getClass().getResourceAsStream("/com/example/imagens/livro.png"));
+        Image imagemComputador = new Image(getClass().getResourceAsStream("/com/example/imagens/computador.png"));
+
         this.produtoService = ProdutoService.obterInstancia();
         selecaoProduto.getItems().addAll("Livro","Computador");
         cadastrar.setVisible(false);
@@ -48,10 +55,11 @@ public class CadastroProdutoController {
         String produtoSelecionado = selecaoProduto.getValue();
         
         if (produtoSelecionado.equals("Livro")) {
+            imagemView.setImage(imagemLivro);
             exibirCamposLivro();
         } else if (produtoSelecionado.equals("Computador")) {
+            imagemView.setImage(imagemComputador);
             exibirCamposComputador();
-
         }
     });
 
@@ -75,6 +83,7 @@ public class CadastroProdutoController {
         Produto produto;
 
         if (tipoProduto.equals("Livro")){
+           
             String nome = campoNome.getText();
             double preco = Double.parseDouble(campoPreco.getText());
             String autor = campoAutor.getText();
@@ -83,7 +92,9 @@ public class CadastroProdutoController {
             produto = new Livro(nome, preco, autor, editora);
             produtoService.addProduto(produto);
             System.out.println("Nome: " + nome + " Preço: " + preco + " Tipo: " + tipoProduto);
+
         } else if (tipoProduto.equals("Computador")){
+            
             String nome = campoNome.getText();
             double preco = Double.parseDouble(campoPreco.getText());
             String processador = campoProcessador.getText();
