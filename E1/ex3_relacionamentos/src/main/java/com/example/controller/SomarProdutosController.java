@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import java.util.List;
+
 import com.example.db.DataBase;
 import com.example.model.Produto;
 
@@ -26,9 +28,11 @@ public class SomarProdutosController {
 
     @FXML
     public void calcularPrecoTotal() {
-        double precoTotal = listaProdutos.getSelectionModel().getSelectedItems().stream()
-            .mapToDouble(Produto::getPreco)
-            .sum();
-        labelPrecoTotal.setText("Preço Total: " + precoTotal);
+        double precoTotal = 0.0;
+        List<Produto> produtos =  DataBase.getProdutos();
+        for(Produto produto : produtos){
+            precoTotal += produto.getPreco();
+        }
+        labelPrecoTotal.setText("Preço Total: R$" + precoTotal);
     }
 }
