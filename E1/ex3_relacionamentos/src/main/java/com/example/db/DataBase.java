@@ -5,28 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataBase {
-    //O estatico faz com que todos os objetos da classe DataBase compartilhem a mesma instancia
-    //Dessa forma armazenando os produtos em uma unica instancia :)
-    private static DataBase instancia;
-    private List<Produto> produtos;
+    // Tornando essa lista estatica faz com que ela se torne uma variavel da 
+    // classe e nao de uma instancia da classe
+    private static List<Produto> produtos = new ArrayList<>();
 
-    public DataBase() {
-        
-        this.produtos = new ArrayList<>();
-    }
-    //Singleton
-    public static DataBase obterInstancia() {
-        if (instancia == null) {
-            instancia = new DataBase();
-        }
-        return instancia;
+    public static void addProduto(Produto produto) {
+        produtos.add(produto);
     }
 
-    public void addProduto(Produto produto) {
-        this.produtos.add(produto);
-    }
-
-    public List<Produto> getProdutos() {
-        return this.produtos;
+    public static List<Produto> getProdutos() {
+        return produtos;
     }
 }

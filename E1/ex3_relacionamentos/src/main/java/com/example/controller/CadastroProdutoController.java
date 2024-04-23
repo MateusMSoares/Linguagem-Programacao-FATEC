@@ -35,8 +35,6 @@ public class CadastroProdutoController {
     private Button cadastrar;
     @FXML
     private ImageView imagemView;
-
-    private DataBase produtoService;
     
 
     @FXML
@@ -44,7 +42,6 @@ public class CadastroProdutoController {
         Image imagemLivro = new Image(getClass().getResourceAsStream("/com/example/imagens/livro.png"));
         Image imagemComputador = new Image(getClass().getResourceAsStream("/com/example/imagens/computador.png"));
 
-        this.produtoService = DataBase.obterInstancia();
         selecaoProduto.getItems().addAll("Livro","Computador");
         cadastrar.setVisible(false);
 
@@ -88,7 +85,7 @@ public class CadastroProdutoController {
             String editora = campoEditora.getText();
             
             produto = new Livro(nome, preco, autor, editora);
-            produtoService.addProduto(produto);
+            DataBase.addProduto(produto);
             System.out.println("Nome: " + nome + " Preço: " + preco + " Tipo: " + tipoProduto);
 
         } else if (tipoProduto.equals("Computador")){
@@ -98,7 +95,7 @@ public class CadastroProdutoController {
             String processador = campoProcessador.getText();
             String memoria = campoMemoria.getText();
             produto = new Computador(nome, preco, processador, memoria);
-            produtoService.addProduto(produto);
+            DataBase.addProduto(produto);
             System.out.println("Nome: " + nome + " Preço: " + preco + " Tipo: " + tipoProduto);
         }
 

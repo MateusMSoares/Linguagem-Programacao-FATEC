@@ -16,14 +16,12 @@ public class SomarProdutosController {
     @FXML
     private Label labelPrecoTotal;
 
-    private DataBase produtoService;
-
     @FXML
     public void initialize() {
-        this.produtoService = DataBase.obterInstancia();
-        listaProdutos.getItems().addAll(produtoService.getProdutos());
+
+        listaProdutos.getItems().addAll(DataBase.getProdutos());
         listaProdutos.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        System.out.println("Produtos: " + produtoService.getProdutos());
+        System.out.println("Produtos: " + DataBase.getProdutos());
     }
 
     @FXML
