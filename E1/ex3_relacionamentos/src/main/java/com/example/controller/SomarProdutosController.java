@@ -1,7 +1,7 @@
 package com.example.controller;
 
+import com.example.db.DataBase;
 import com.example.model.Produto;
-import com.example.service.ProdutoService;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -16,11 +16,11 @@ public class SomarProdutosController {
     @FXML
     private Label labelPrecoTotal;
 
-    private ProdutoService produtoService;
+    private DataBase produtoService;
 
     @FXML
     public void initialize() {
-        this.produtoService = ProdutoService.obterInstancia();
+        this.produtoService = DataBase.obterInstancia();
         listaProdutos.getItems().addAll(produtoService.getProdutos());
         listaProdutos.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         System.out.println("Produtos: " + produtoService.getProdutos());

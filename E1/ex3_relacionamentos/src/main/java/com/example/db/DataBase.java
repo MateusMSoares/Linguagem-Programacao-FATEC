@@ -1,20 +1,23 @@
-package com.example.service;
+package com.example.db;
 
 import com.example.model.Produto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProdutoService {
-    private static ProdutoService instancia;
+public class DataBase {
+    //O estatico faz com que todos os objetos da classe DataBase compartilhem a mesma instancia
+    //Dessa forma armazenando os produtos em uma unica instancia :)
+    private static DataBase instancia;
     private List<Produto> produtos;
 
-    public ProdutoService() {
+    public DataBase() {
+        
         this.produtos = new ArrayList<>();
     }
-
-    public static ProdutoService obterInstancia() {
+    //Singleton
+    public static DataBase obterInstancia() {
         if (instancia == null) {
-            instancia = new ProdutoService();
+            instancia = new DataBase();
         }
         return instancia;
     }

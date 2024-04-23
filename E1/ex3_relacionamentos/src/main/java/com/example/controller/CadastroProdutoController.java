@@ -1,11 +1,9 @@
 package com.example.controller;
 
-import java.nio.file.Paths;
-
+import com.example.db.DataBase;
 import com.example.model.Computador;
 import com.example.model.Livro;
 import com.example.model.Produto;
-import com.example.service.ProdutoService;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,7 +36,7 @@ public class CadastroProdutoController {
     @FXML
     private ImageView imagemView;
 
-    private ProdutoService produtoService;
+    private DataBase produtoService;
     
 
     @FXML
@@ -46,7 +44,7 @@ public class CadastroProdutoController {
         Image imagemLivro = new Image(getClass().getResourceAsStream("/com/example/imagens/livro.png"));
         Image imagemComputador = new Image(getClass().getResourceAsStream("/com/example/imagens/computador.png"));
 
-        this.produtoService = ProdutoService.obterInstancia();
+        this.produtoService = DataBase.obterInstancia();
         selecaoProduto.getItems().addAll("Livro","Computador");
         cadastrar.setVisible(false);
 
