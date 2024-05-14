@@ -6,8 +6,6 @@ public class Main {
         Livro livro1 = new Livro();
         Cidade cidade1 = new Cidade();
 
-     
-
         pessoa1.setNome("Regina");
         pessoa1.setIdade(65);
         pessoa1.setEstadoEmocional("feliz");
