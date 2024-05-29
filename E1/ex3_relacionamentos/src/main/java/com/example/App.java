@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import com.example.db.DataBase;
+
 /**
  * JavaFX App
  */
@@ -17,6 +19,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        DataBase dataBase = new DataBase();
+        dataBase.criarTabelas();
+        System.out.println("Tabelas criadas");
+        dataBase.fechaConexao();
         scene = new Scene(loadFXML("Principal"), 640, 480);
         stage.setScene(scene);
         stage.show();

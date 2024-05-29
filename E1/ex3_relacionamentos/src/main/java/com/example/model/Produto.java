@@ -13,6 +13,8 @@ public class Produto {
         this.preco = preco;
         this.tipoProduto = tipoProduto;
     }
+    public Produto(){
+    }
 
     public int getId() {
         return id;

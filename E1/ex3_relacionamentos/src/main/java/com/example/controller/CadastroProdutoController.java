@@ -3,7 +3,6 @@ package com.example.controller;
 import com.example.db.DataBase;
 import com.example.model.Computador;
 import com.example.model.Livro;
-import com.example.model.Produto;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -75,17 +74,19 @@ public class CadastroProdutoController {
             return; 
         }
 
-        Produto produto;
-
         if (tipoProduto.equals("Livro")){
            
             String nome = campoNome.getText();
             double preco = Double.parseDouble(campoPreco.getText());
             String autor = campoAutor.getText();
             String editora = campoEditora.getText();
-            
-            produto = new Livro(nome, preco, autor, editora);
-            DataBase.addProduto(produto);
+            Livro livro = new Livro(nome, preco, autor, editora);
+            System.out.println("Livro");
+            System.out.println(livro.toString());
+            DataBase dataBase = new DataBase();
+            dataBase.addProduto(livro);
+            dataBase.addLivro(livro);
+            dataBase.fechaConexao();
             System.out.println("Nome: " + nome + " Preço: " + preco + " Tipo: " + tipoProduto);
 
         } else if (tipoProduto.equals("Computador")){
@@ -94,8 +95,11 @@ public class CadastroProdutoController {
             double preco = Double.parseDouble(campoPreco.getText());
             String processador = campoProcessador.getText();
             String memoria = campoMemoria.getText();
-            produto = new Computador(nome, preco, processador, memoria);
-            DataBase.addProduto(produto);
+            Computador computador = new Computador(nome, preco, processador, memoria);
+            DataBase dataBase = new DataBase();
+            dataBase.addProduto(computador);
+            dataBase.addComputador(computador);
+            dataBase.fechaConexao();
             System.out.println("Nome: " + nome + " Preço: " + preco + " Tipo: " + tipoProduto);
         }
 
