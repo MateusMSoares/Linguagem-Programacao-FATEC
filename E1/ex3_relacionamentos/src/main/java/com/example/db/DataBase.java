@@ -1,5 +1,6 @@
 package com.example.db;
 
+import com.example.interfaces.UpdateProduto;
 import com.example.model.Computador;
 import com.example.model.Livro;
 import com.example.model.Produto;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataBase {
+    //Informações para conectar ao banco
     private String nomeDB = "exerciciofatec";
     private String url = "jdbc:postgresql://localhost/" + nomeDB;
     private String user = "postgres";
@@ -162,6 +164,7 @@ public class DataBase {
                 livroSelecionado.setNome(rs.getString("nome"));
                 livroSelecionado.setAutor(rs.getString("autor"));
                 livroSelecionado.setEditora(rs.getString("editora"));
+                livroSelecionado.setPreco(produtoSelecionado.getPreco());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -196,6 +199,7 @@ public class DataBase {
                 computadorSelecionado.setNome(rs.getString("nome"));
                 computadorSelecionado.setProcessador(rs.getString("processador"));
                 computadorSelecionado.setMemoria(rs.getString("memoria"));
+                computadorSelecionado.setPreco(produtoSelecionado.getPreco());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -226,24 +230,14 @@ public class DataBase {
             pstmt.setDouble(2, produtoEditado.getPreco());
             pstmt.setInt(3, produtoEditado.getId());
             pstmt.executeUpdate();
-
-            if (produtoEditado.getTipoProduto() == "livro"){
-                String sqlLivro = "UPDATE livro SET nome = ?, autor = ?, editora = ? WHERE id = ?";
-                var pstmtLivro = conn.prepareStatement(sqlLivro);
-                pstmtLivro.setString(1, ((Livro) produtoEditado).getNome());
-                pstmtLivro.setString(2, ((Livro) produtoEditado).getAutor());
-                pstmtLivro.setString(3, ((Livro) produtoEditado).getEditora());
-                pstmtLivro.setInt(4, produtoEditado.getId());
-                pstmtLivro.executeUpdate();
-            } else{
-                String sqlComputador = "UPDATE computador SET nome = ?, processador = ?, memoria = ? WHERE id = ?";
-                var pstmtComputador = conn.prepareStatement(sqlComputador);
-                pstmtComputador.setString(1, ((Computador) produtoEditado).getNome());
-                pstmtComputador.setString(2, ((Computador) produtoEditado).getProcessador());
-                pstmtComputador.setString(3, ((Computador) produtoEditado).getMemoria());
-                pstmtComputador.setInt(4, produtoEditado.getId());
-                pstmtComputador.executeUpdate();
+            String sqlProduto = ((UpdateProduto) produtoEditado).setUpdateSql();
+            var pstmtProduto = conn.prepareStatement(sqlProduto);
+            try {
+                ((UpdateProduto) produtoEditado).setUpdateParameters(pstmtProduto);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            pstmtProduto.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

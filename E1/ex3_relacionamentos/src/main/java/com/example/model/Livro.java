@@ -1,6 +1,11 @@
 package com.example.model;
 
-public class Livro extends Produto {
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import com.example.interfaces.UpdateProduto;
+
+public class Livro extends Produto implements UpdateProduto{
     private String autor;
     private String editora;
     
@@ -34,9 +39,23 @@ public class Livro extends Produto {
     public void setEditora(String editora) {
         this.editora = editora;
     }    
+
     @Override
     public String toString() {
         return super.toString() + ", autor = " + autor + ", editora = " + editora;
+    }
+
+    @Override
+    public String setUpdateSql() {
+        return "UPDATE livro SET nome = ?, autor = ?, editora = ? WHERE id = ?";
+    }
+
+    @Override
+    public void setUpdateParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, getNome());
+        pstmt.setString(2, getAutor());
+        pstmt.setString(3, getEditora());
+        pstmt.setInt(4, getId());
     }
 
 }

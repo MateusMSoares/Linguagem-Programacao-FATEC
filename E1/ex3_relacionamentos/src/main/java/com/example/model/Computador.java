@@ -1,6 +1,11 @@
 package com.example.model;
 
-public class Computador extends Produto{
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import com.example.interfaces.UpdateProduto;
+
+public class Computador extends Produto implements UpdateProduto{
     private String processador;
     private String memoria;
 
@@ -39,5 +44,18 @@ public class Computador extends Produto{
     @Override
     public String toString() {
         return super.toString() + ", processador = " + processador + ", memoria = " + memoria;
+    }
+
+    @Override
+    public String setUpdateSql() {
+        return "UPDATE computador SET nome = ?, processador = ?, memoria = ? WHERE id = ?";
+    }
+
+    @Override
+    public void setUpdateParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, getNome());
+        pstmt.setString(2, getProcessador());
+        pstmt.setString(3, getMemoria());
+        pstmt.setInt(4, getId());
     }
 }
