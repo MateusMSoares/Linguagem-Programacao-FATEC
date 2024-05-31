@@ -11,6 +11,15 @@ public class Computador extends Produto{
         this.memoria = memoria;
     }
 
+    public Computador(int id, String nome, double preco, String processador, String memoria){
+        super(id, nome, preco, "computador");
+        this.processador = processador;
+        this.memoria = memoria;
+    }
+
+    public Computador(){
+    }
+
     public String getProcessador() {
         return processador;
     }

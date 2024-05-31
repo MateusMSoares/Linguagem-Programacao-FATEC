@@ -10,6 +10,15 @@ public class Livro extends Produto {
         this.editora = editora;
     }
 
+    public Livro(int id, String nome, double preco, String autor, String editora){
+        super(id, nome, preco, "livro");
+        this.autor = autor;
+        this.editora = editora;
+    }
+
+    public Livro(){
+    }
+
     public String getAutor() {
         return autor;
     }

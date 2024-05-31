@@ -16,9 +16,6 @@
             </content>
           </Tab>
           <Tab fx:id="tabSomarProdutos" text="Adicionar ao Carrinho">
-            <content>
-              <fx:include source="SomarProdutos.fxml" />
-            </content>
           </Tab>
         </tabs>
       </TabPane>

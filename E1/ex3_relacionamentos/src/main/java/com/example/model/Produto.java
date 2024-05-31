@@ -5,10 +5,15 @@ public class Produto {
     private String nome;
     private double preco;
     private String tipoProduto;
-    private static int geraId  = 1;
     
     public Produto(String nome, double preco, String tipoProduto) {
-        this.id = geraId++;
+        this.nome = nome;
+        this.preco = preco;
+        this.tipoProduto = tipoProduto;
+    }
+
+    public Produto(int id, String nome, double preco, String tipoProduto) {
+        this.id = id;
         this.nome = nome;
         this.preco = preco;
         this.tipoProduto = tipoProduto;
@@ -52,4 +57,6 @@ public class Produto {
     public String toString() {
         return "tipo = " + tipoProduto + " id = " + id + ", nome = " + nome + ", preco = " + preco;
     }
+
+    
 }

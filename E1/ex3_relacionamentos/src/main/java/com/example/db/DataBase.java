@@ -7,7 +7,9 @@ import com.example.model.Produto;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +56,32 @@ public class DataBase {
     public void criarTabelaProduto() {
         System.out.println("Criando tabela produto");
         try {
-            String sql = "CREATE TABLE IF NOT EXISTS produto (id INTEGER, " +
+            String sql = "CREATE TABLE IF NOT EXISTS produto (id SERIAL PRIMARY KEY, " +
             "nome VARCHAR(255), preco DOUBLE PRECISION, tipo VARCHAR(255))";
+            var stmt = conn.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void criarTabelaLivro() {
+        try {
+            String sql = "CREATE TABLE IF NOT EXISTS livro (id INTEGER, " +
+            "nome VARCHAR(255), autor VARCHAR(255), editora VARCHAR(255), " +
+            "FOREIGN KEY (id) REFERENCES produto(id) ON DELETE CASCADE ON UPDATE CASCADE)";
+            var stmt = conn.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void criarTabelaComputador() {
+        try {
+            String sql = "CREATE TABLE IF NOT EXISTS computador (id INTEGER, " +
+            "nome VARCHAR(255), processador VARCHAR(255), memoria VARCHAR(255), " + 
+            "FOREIGN KEY (id) REFERENCES produto(id) ON DELETE CASCADE ON UPDATE CASCADE)";
             var stmt = conn.createStatement();
             stmt.execute(sql);
         } catch (SQLException e) {
@@ -84,15 +110,19 @@ public class DataBase {
     }
 
     public void addProduto(Produto produto) {
-        System.out.println(produto.getTipoProduto());
         try {
-            String sql = "INSERT INTO produto (id, nome, preco, tipo) VALUES (?, ?, ?, ?)";
-            var pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, produto.getId());
-            pstmt.setString(2, produto.getNome());
-            pstmt.setDouble(3, produto.getPreco());
-            pstmt.setString(4, produto.getTipoProduto());
+            String sql = "INSERT INTO produto (nome, preco, tipo) VALUES (?, ?, ?)";
+            var pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, produto.getNome());
+            pstmt.setDouble(2, produto.getPreco());
+            pstmt.setString(3, produto.getTipoProduto());
             pstmt.execute();
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int idGerado = rs.getInt(1);
+                System.out.println("ID gerado: " + idGerado);
+                produto.setId(idGerado);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -120,10 +150,30 @@ public class DataBase {
         }
     }
 
+    public Livro getLivro(Produto produtoSelecionado){
+        Livro livroSelecionado = new Livro();
+        try {
+            String sql = "SELECT * FROM livro WHERE id = ?";
+            var pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, produtoSelecionado.getId());
+            var rs = pstmt.executeQuery();
+            while (rs.next()) {
+                livroSelecionado.setId(rs.getInt("id"));
+                livroSelecionado.setNome(rs.getString("nome"));
+                livroSelecionado.setAutor(rs.getString("autor"));
+                livroSelecionado.setEditora(rs.getString("editora"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return livroSelecionado;
+    }
+
     public void addLivro(Livro livro) {
         try {
             String sql = "INSERT INTO livro (id, nome, autor, editora) VALUES (?, ?, ?, ?)";
             var pstmt = conn.prepareStatement(sql);
+            System.out.println("id: " +livro.getId());
             pstmt.setInt(1, livro.getId());
             pstmt.setString(2, livro.getNome());
             pstmt.setString(3, livro.getAutor());
@@ -132,6 +182,25 @@ public class DataBase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Computador getComputador(Produto produtoSelecionado){
+        Computador computadorSelecionado = new Computador();
+        try {
+            String sql = "SELECT * FROM computador WHERE id = ?";
+            var pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, produtoSelecionado.getId());
+            var rs = pstmt.executeQuery();
+            while (rs.next()) {
+                computadorSelecionado.setId(rs.getInt("id"));
+                computadorSelecionado.setNome(rs.getString("nome"));
+                computadorSelecionado.setProcessador(rs.getString("processador"));
+                computadorSelecionado.setMemoria(rs.getString("memoria"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return computadorSelecionado;
     }
 
     public void addComputador(Computador computador){
@@ -148,26 +217,35 @@ public class DataBase {
         }
     }
 
-    public void criarTabelaLivro() {
+    public void updateProduto(Produto produtoEditado){
+        System.out.println("Produto editado: " + produtoEditado.getTipoProduto());
         try {
-            String sql = "CREATE TABLE IF NOT EXISTS livro (id INTEGER, " +
-            "nome VARCHAR(255), autor VARCHAR(255), editora VARCHAR(255))";
-            var stmt = conn.createStatement();
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+            String sql = "UPDATE produto SET nome = ?, preco = ? WHERE id = ?";
+            var pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, produtoEditado.getNome());
+            pstmt.setDouble(2, produtoEditado.getPreco());
+            pstmt.setInt(3, produtoEditado.getId());
+            pstmt.executeUpdate();
 
-    public void criarTabelaComputador() {
-        try {
-            String sql = "CREATE TABLE IF NOT EXISTS computador (id INTEGER, " +
-            "nome VARCHAR(255), processador VARCHAR(255), memoria VARCHAR(255))";
-            var stmt = conn.createStatement();
-            stmt.execute(sql);
+            if (produtoEditado.getTipoProduto() == "livro"){
+                String sqlLivro = "UPDATE livro SET nome = ?, autor = ?, editora = ? WHERE id = ?";
+                var pstmtLivro = conn.prepareStatement(sqlLivro);
+                pstmtLivro.setString(1, ((Livro) produtoEditado).getNome());
+                pstmtLivro.setString(2, ((Livro) produtoEditado).getAutor());
+                pstmtLivro.setString(3, ((Livro) produtoEditado).getEditora());
+                pstmtLivro.setInt(4, produtoEditado.getId());
+                pstmtLivro.executeUpdate();
+            } else{
+                String sqlComputador = "UPDATE computador SET nome = ?, processador = ?, memoria = ? WHERE id = ?";
+                var pstmtComputador = conn.prepareStatement(sqlComputador);
+                pstmtComputador.setString(1, ((Computador) produtoEditado).getNome());
+                pstmtComputador.setString(2, ((Computador) produtoEditado).getProcessador());
+                pstmtComputador.setString(3, ((Computador) produtoEditado).getMemoria());
+                pstmtComputador.setInt(4, produtoEditado.getId());
+                pstmtComputador.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-            
+    }          
 }

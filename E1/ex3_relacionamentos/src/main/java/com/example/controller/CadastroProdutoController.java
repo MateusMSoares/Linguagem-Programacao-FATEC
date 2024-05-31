@@ -87,7 +87,8 @@ public class CadastroProdutoController {
             dataBase.addProduto(livro);
             dataBase.addLivro(livro);
             dataBase.fechaConexao();
-            System.out.println("Nome: " + nome + " Preço: " + preco + " Tipo: " + tipoProduto);
+            System.out.println("Livro");
+            System.out.println(livro.toString());
 
         } else if (tipoProduto.equals("Computador")){
             
@@ -100,7 +101,8 @@ public class CadastroProdutoController {
             dataBase.addProduto(computador);
             dataBase.addComputador(computador);
             dataBase.fechaConexao();
-            System.out.println("Nome: " + nome + " Preço: " + preco + " Tipo: " + tipoProduto);
+            System.out.println("Computador");
+            System.out.println(computador.toString());
         }
 
 

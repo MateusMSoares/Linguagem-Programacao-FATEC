@@ -1,16 +1,25 @@
 package com.example.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.db.DataBase;
+import com.example.model.Computador;
+import com.example.model.Livro;
 import com.example.model.Produto;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class SomarProdutosController {
 
@@ -32,14 +41,24 @@ public class SomarProdutosController {
                 setText(null);
                 setGraphic(null);
             } else {
+                HBox hbox = new HBox(10);
+
+                Button editButton = new Button("Editar");
+                editButton.setOnAction(event -> {
+                    Produto produtoSelecionado = getItem();
+                    editarProduto(produtoSelecionado);
+                });
+
                 Button deleteButton = new Button("Deletar");
-                setText(produto.toString());
                 deleteButton.setOnAction(event -> {
                     DataBase dataBase = new DataBase();
                     dataBase.deletarProduto(produto);
                     listaProdutos.getItems().remove(produto);
                 });
-                setGraphic(deleteButton);
+
+                hbox.getChildren().addAll(editButton, deleteButton); 
+                setText(produto.toString());
+                setGraphic(hbox);
                 }
             }
         });
@@ -67,4 +86,100 @@ public class SomarProdutosController {
         }
         labelPrecoTotal.setText("Preço Total: R$" + precoTotal);
     }
+
+    public void editarProduto(Produto produtoSelecionado){
+        DataBase dataBase = new DataBase();
+        Dialog<Produto> dialog = new Dialog<>();
+        dialog.setTitle("Editar Produto");
+        if (produtoSelecionado.getTipoProduto().equals("livro")){
+            produtoSelecionado = dataBase.getLivro(produtoSelecionado);
+            criaDialogoLivro(dialog, (Livro)produtoSelecionado);
+        }else if ((produtoSelecionado.getTipoProduto().equals("computador"))) {
+            produtoSelecionado = dataBase.getComputador(produtoSelecionado);
+            criarDialogoComputador(dialog, (Computador)produtoSelecionado);
+        }
+        dataBase.fechaConexao();
+    }
+
+    public void criaDialogoLivro(Dialog<Produto> dialog, Livro livroSelecionado){
+        Label labelNome = new Label("Nome do livro: ");
+        TextField campoNome = new TextField(livroSelecionado.getNome());
+        HBox hboxNome = new HBox(labelNome, campoNome);
+        
+        Label labelAutor = new Label("Autor do livro: ");
+        TextField campoAutor = new TextField(livroSelecionado.getAutor());
+        HBox hboxAutor = new HBox(labelAutor, campoAutor);
+        
+        Label labelEditora = new Label("Editora do livro: ");
+        TextField campoEditora = new TextField(livroSelecionado.getEditora());
+        HBox hboxEditora = new HBox(labelEditora, campoEditora);
+        
+        Label labelPreco = new Label("Preço do livro: ");
+        TextField campoPreco = new TextField(String.valueOf(livroSelecionado.getPreco()));
+        HBox hboxPreco = new HBox(labelPreco, campoPreco);
+        
+        dialog.getDialogPane().setContent(new VBox(8, hboxNome, hboxAutor, hboxEditora, hboxPreco));
+    
+        ButtonType confirmButtonType = new ButtonType("Confirmar", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
+
+        // Define o resultado do diálogo para um novo Produto com as informações editadas
+        dialog.setResultConverter(button -> {
+            if (button == confirmButtonType) {
+                return new Livro(livroSelecionado.getId(), campoNome.getText(), 
+                    Double.parseDouble(campoPreco.getText()), campoAutor.getText(), 
+                    campoEditora.getText());
+            }
+            return null;
+        });
+            Optional<Produto> result = dialog.showAndWait();
+            result.ifPresent(livroEditado ->
+                realizarUpdate(livroEditado));
+    }
+
+    public void criarDialogoComputador(Dialog<Produto> dialog, Computador computadorSelecionado){
+        Label labelNome = new Label("Nome do computador: ");
+        TextField campoNome = new TextField(computadorSelecionado.getNome());
+        HBox hboxNome = new HBox(labelNome, campoNome);
+        
+        Label labelProcessador = new Label("Processador do computador: ");
+        TextField campoProcessador = new TextField(computadorSelecionado.getProcessador());
+        HBox hboxProcessador = new HBox(labelProcessador, campoProcessador);
+        
+        Label labelMemoria = new Label("Memória do computador: ");
+        TextField campoMemoria = new TextField(computadorSelecionado.getMemoria());
+        HBox hboxMemoria = new HBox(labelMemoria, campoMemoria);
+        
+        Label labelPreco = new Label("Preço do computador: ");
+        TextField campoPreco = new TextField(String.valueOf(computadorSelecionado.getPreco()));
+        HBox hboxPreco = new HBox(labelPreco, campoPreco);
+        
+        dialog.getDialogPane().setContent(new VBox(8, hboxNome, hboxProcessador, hboxMemoria, hboxPreco));
+    
+        ButtonType confirmButtonType = new ButtonType("Confirmar", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
+
+        // Define o resultado do diálogo para um novo Produto com as informações editadas
+        dialog.setResultConverter(button -> {
+            if (button == confirmButtonType) {
+                return new Computador(computadorSelecionado.getId(), 
+                    campoNome.getText(), Double.parseDouble(campoPreco.getText()), 
+                    campoProcessador.getText(), campoMemoria.getText());
+            }
+            return null;
+        });
+            Optional<Produto> result = dialog.showAndWait();
+            result.ifPresent(computadorEditado ->
+                realizarUpdate(computadorEditado));
+    }
+
+    public void realizarUpdate(Produto produtoEditado){
+        System.out.println("Produto editado: " + produtoEditado.toString());
+        DataBase dataBase = new DataBase();
+        dataBase.updateProduto(produtoEditado);
+        dataBase.fechaConexao();
+        listaProdutos.getItems().clear();
+        popularTabela();
+    }
+
 }
