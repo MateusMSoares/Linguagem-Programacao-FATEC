@@ -1,11 +1,13 @@
 package com.example.model;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.example.interfaces.CreateProduto;
 import com.example.interfaces.UpdateProduto;
 
-public class Computador extends Produto implements UpdateProduto{
+public class Computador extends Produto implements UpdateProduto, CreateProduto{
     private String processador;
     private String memoria;
 
@@ -58,4 +60,17 @@ public class Computador extends Produto implements UpdateProduto{
         pstmt.setString(3, getMemoria());
         pstmt.setInt(4, getId());
     }
+
+    @Override
+    public Computador criarProduto(ResultSet rs) throws SQLException {
+        Computador computador = new Computador();
+        computador.setId(rs.getInt("id"));
+        computador.setNome(rs.getString("nome"));
+        computador.setTipoProduto(rs.getString("tipo"));
+        computador.setPreco(rs.getDouble("preco"));
+        computador.setProcessador(rs.getString("computador_processador"));
+        computador.setMemoria(rs.getString("computador_memoria"));
+        return computador;  
+    }
+
 }

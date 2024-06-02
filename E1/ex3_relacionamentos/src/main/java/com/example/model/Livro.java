@@ -1,11 +1,13 @@
 package com.example.model;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.example.interfaces.CreateProduto;
 import com.example.interfaces.UpdateProduto;
 
-public class Livro extends Produto implements UpdateProduto{
+public class Livro extends Produto implements UpdateProduto, CreateProduto{
     private String autor;
     private String editora;
     
@@ -56,6 +58,18 @@ public class Livro extends Produto implements UpdateProduto{
         pstmt.setString(2, getAutor());
         pstmt.setString(3, getEditora());
         pstmt.setInt(4, getId());
+    }
+
+    @Override
+    public Livro criarProduto(ResultSet rs) throws SQLException {
+        Livro livro = new Livro();
+        livro.setId(rs.getInt("id"));
+        livro.setTipoProduto(rs.getString("tipo"));
+        livro.setNome(rs.getString("nome"));
+        livro.setAutor(rs.getString("livro_autor"));
+        livro.setEditora(rs.getString("livro_editora"));
+        livro.setPreco(rs.getDouble("preco"));
+        return livro;
     }
 
 }

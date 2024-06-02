@@ -92,23 +92,51 @@ public class DataBase {
     }
 
     public List<Produto> getProdutos() {
-        List<Produto> produtos = new ArrayList<>();
+        List<Produto> produtosBanco = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM produto";
+            String sql = "SELECT " +
+                        "produto.id, " +
+                        "produto.nome, " +
+                        "produto.preco, " +
+                        "produto.tipo, " +
+                        "livro.autor AS livro_autor, " +
+                        "livro.editora AS livro_editora, " +
+                        "computador.processador AS computador_processador, " +
+                        "computador.memoria AS computador_memoria " +
+                    "FROM " +
+                        "produto " +
+                    "LEFT JOIN " +
+                        "livro ON produto.id = livro.id " +
+                    "LEFT JOIN " +
+                        "computador ON produto.id = computador.id";
             var stmt = conn.createStatement();
             var rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                Produto produto = new Produto();
-                produto.setId(rs.getInt("id"));
-                produto.setNome(rs.getString("nome"));
-                produto.setPreco(rs.getDouble("preco"));
-                produto.setTipoProduto(rs.getString("tipo"));
-                produtos.add(produto);
+                switch(rs.getString("tipo")) {
+                    case "livro":
+                        Livro livro = new Livro();
+                        livro = livro.criarProduto(rs);
+                        produtosBanco.add(livro);
+                        break;
+                    case "computador":
+                        Computador computadorBanco = new Computador();
+                        computadorBanco = computadorBanco.criarProduto(rs);
+                        produtosBanco.add(computadorBanco);
+                        break;
+                    default:
+                        Produto produto = new Produto();
+                        produto.setId(rs.getInt("id"));
+                        produto.setTipoProduto(rs.getString("tipo"));
+                        produto.setNome(rs.getString("nome"));
+                        produto.setPreco(rs.getDouble("preco"));
+                        produto.setTipoProduto(rs.getString("tipo"));
+                        produtosBanco.add(produto);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return produtos;
+        return produtosBanco;
     }
 
     public void addProduto(Produto produto) {
@@ -147,41 +175,6 @@ public class DataBase {
             PreparedStatement stmtComputador = conn.prepareStatement(sqlComputador);
             stmtComputador.setInt(1, id);
             stmtComputador.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Livro getLivro(Produto produtoSelecionado){
-        Livro livroSelecionado = new Livro();
-        try {
-            String sql = "SELECT * FROM livro WHERE id = ?";
-            var pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, produtoSelecionado.getId());
-            var rs = pstmt.executeQuery();
-            while (rs.next()) {
-                livroSelecionado.setId(rs.getInt("id"));
-                livroSelecionado.setNome(rs.getString("nome"));
-                livroSelecionado.setAutor(rs.getString("autor"));
-                livroSelecionado.setEditora(rs.getString("editora"));
-                livroSelecionado.setPreco(produtoSelecionado.getPreco());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return livroSelecionado;
-    }
-
-    public void addLivro(Livro livro) {
-        try {
-            String sql = "INSERT INTO livro (id, nome, autor, editora) VALUES (?, ?, ?, ?)";
-            var pstmt = conn.prepareStatement(sql);
-            System.out.println("id: " +livro.getId());
-            pstmt.setInt(1, livro.getId());
-            pstmt.setString(2, livro.getNome());
-            pstmt.setString(3, livro.getAutor());
-            pstmt.setString(4, livro.getEditora());
-            pstmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -232,6 +225,7 @@ public class DataBase {
             pstmt.executeUpdate();
             String sqlProduto = ((UpdateProduto) produtoEditado).setUpdateSql();
             var pstmtProduto = conn.prepareStatement(sqlProduto);
+            //Update do produto especifico por meio de interfaces
             try {
                 ((UpdateProduto) produtoEditado).setUpdateParameters(pstmtProduto);
             } catch (Exception e) {

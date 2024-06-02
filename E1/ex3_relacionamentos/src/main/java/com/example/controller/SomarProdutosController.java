@@ -92,10 +92,8 @@ public class SomarProdutosController {
         Dialog<Produto> dialog = new Dialog<>();
         dialog.setTitle("Editar Produto");
         if (produtoSelecionado.getTipoProduto().equals("livro")){
-            produtoSelecionado = dataBase.getLivro(produtoSelecionado);
             criaDialogoLivro(dialog, (Livro)produtoSelecionado);
         }else if ((produtoSelecionado.getTipoProduto().equals("computador"))) {
-            produtoSelecionado = dataBase.getComputador(produtoSelecionado);
             criarDialogoComputador(dialog, (Computador)produtoSelecionado);
         }
         dataBase.fechaConexao();
