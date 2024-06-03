@@ -1,6 +1,5 @@
 package com.example.db;
 
-import com.example.interfaces.UpdateProduto;
 import com.example.model.Computador;
 import com.example.model.Livro;
 import com.example.model.Produto;
@@ -10,7 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,23 +112,21 @@ public class DataBase {
             while (rs.next()) {
                 switch(rs.getString("tipo")) {
                     case "livro":
-                        Livro livro = new Livro();
-                        livro = livro.criarProduto(rs);
-                        produtosBanco.add(livro);
+                        Produto produto = new Livro().criarProduto(rs);
+                        produtosBanco.add(produto);
                         break;
                     case "computador":
-                        Computador computadorBanco = new Computador();
-                        computadorBanco = computadorBanco.criarProduto(rs);
-                        produtosBanco.add(computadorBanco);
+                        Produto produtoComputador = new Computador().criarProduto(rs);
+                        produtosBanco.add(produtoComputador);
                         break;
                     default:
-                        Produto produto = new Produto();
-                        produto.setId(rs.getInt("id"));
-                        produto.setTipoProduto(rs.getString("tipo"));
-                        produto.setNome(rs.getString("nome"));
-                        produto.setPreco(rs.getDouble("preco"));
-                        produto.setTipoProduto(rs.getString("tipo"));
-                        produtosBanco.add(produto);
+                        Produto produtoPadrao = new Produto();
+                        produtoPadrao.setId(rs.getInt("id"));
+                        produtoPadrao.setTipoProduto(rs.getString("tipo"));
+                        produtoPadrao.setNome(rs.getString("nome"));
+                        produtoPadrao.setPreco(rs.getDouble("preco"));
+                        produtoPadrao.setTipoProduto(rs.getString("tipo"));
+                        produtosBanco.add(produtoPadrao);
                 }
             }
         } catch (SQLException e) {
@@ -142,7 +138,7 @@ public class DataBase {
     public void addProduto(Produto produto) {
         try {
             String sql = "INSERT INTO produto (nome, preco, tipo) VALUES (?, ?, ?)";
-            var pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            var pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, produto.getNome());
             pstmt.setDouble(2, produto.getPreco());
             pstmt.setString(3, produto.getTipoProduto());
@@ -150,65 +146,9 @@ public class DataBase {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 int idGerado = rs.getInt(1);
-                System.out.println("ID gerado: " + idGerado);
                 produto.setId(idGerado);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deletarProduto(Produto produto) {
-        try {
-            int id = produto.getId();
-            String sqlProduto = "DELETE FROM produto WHERE id = ?";
-            PreparedStatement stmtProduto = conn.prepareStatement(sqlProduto);
-            stmtProduto.setInt(1, id);
-            stmtProduto.executeUpdate();
-
-            String sqlLivro = "DELETE FROM livro WHERE id = ?";
-            PreparedStatement stmtLivro = conn.prepareStatement(sqlLivro);
-            stmtLivro.setInt(1, id);
-            stmtLivro.executeUpdate();
-
-            String sqlComputador = "DELETE FROM computador WHERE id = ?";
-            PreparedStatement stmtComputador = conn.prepareStatement(sqlComputador);
-            stmtComputador.setInt(1, id);
-            stmtComputador.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Computador getComputador(Produto produtoSelecionado){
-        Computador computadorSelecionado = new Computador();
-        try {
-            String sql = "SELECT * FROM computador WHERE id = ?";
-            var pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, produtoSelecionado.getId());
-            var rs = pstmt.executeQuery();
-            while (rs.next()) {
-                computadorSelecionado.setId(rs.getInt("id"));
-                computadorSelecionado.setNome(rs.getString("nome"));
-                computadorSelecionado.setProcessador(rs.getString("processador"));
-                computadorSelecionado.setMemoria(rs.getString("memoria"));
-                computadorSelecionado.setPreco(produtoSelecionado.getPreco());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return computadorSelecionado;
-    }
-
-    public void addComputador(Computador computador){
-        try {
-            String sql = "INSERT INTO computador (id, nome, processador, memoria) VALUES (?, ?, ?, ?)";
-            var pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, computador.getId());
-            pstmt.setString(2, computador.getNome());
-            pstmt.setString(3, computador.getProcessador());
-            pstmt.setString(4, computador.getMemoria());
-            pstmt.execute();
+                produto.criarProdutoBanco(conn, produto);
+            }            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -217,23 +157,29 @@ public class DataBase {
     public void updateProduto(Produto produtoEditado){
         System.out.println("Produto editado: " + produtoEditado.getTipoProduto());
         try {
+            System.out.println("Produto editado (produto): " + produtoEditado.toString());
             String sql = "UPDATE produto SET nome = ?, preco = ? WHERE id = ?";
             var pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, produtoEditado.getNome());
             pstmt.setDouble(2, produtoEditado.getPreco());
             pstmt.setInt(3, produtoEditado.getId());
             pstmt.executeUpdate();
-            String sqlProduto = ((UpdateProduto) produtoEditado).setUpdateSql();
-            var pstmtProduto = conn.prepareStatement(sqlProduto);
-            //Update do produto especifico por meio de interfaces
-            try {
-                ((UpdateProduto) produtoEditado).setUpdateParameters(pstmtProduto);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            pstmtProduto.executeUpdate();
+            produtoEditado.atualizarProduto(conn, produtoEditado);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }          
+    }
+    
+    public void deletarProduto(Produto produto){
+        try {
+            int id = produto.getId();
+            String sqlProduto = "DELETE FROM produto WHERE id = ?";
+            PreparedStatement stmtProduto = conn.prepareStatement(sqlProduto);
+            stmtProduto.setInt(1, id);
+            stmtProduto.executeUpdate();
+            produto.deletarProduto(conn, produto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

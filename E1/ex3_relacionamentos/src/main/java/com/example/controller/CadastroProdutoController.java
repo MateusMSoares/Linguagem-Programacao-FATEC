@@ -85,7 +85,6 @@ public class CadastroProdutoController {
             System.out.println(livro.toString());
             DataBase dataBase = new DataBase();
             dataBase.addProduto(livro);
-            dataBase.addLivro(livro);
             dataBase.fechaConexao();
             System.out.println("Livro");
             System.out.println(livro.toString());
@@ -99,7 +98,6 @@ public class CadastroProdutoController {
             Computador computador = new Computador(nome, preco, processador, memoria);
             DataBase dataBase = new DataBase();
             dataBase.addProduto(computador);
-            dataBase.addComputador(computador);
             dataBase.fechaConexao();
             System.out.println("Computador");
             System.out.println(computador.toString());

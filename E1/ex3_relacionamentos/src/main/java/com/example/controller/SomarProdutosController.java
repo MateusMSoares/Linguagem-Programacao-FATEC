@@ -124,9 +124,11 @@ public class SomarProdutosController {
         // Define o resultado do diálogo para um novo Produto com as informações editadas
         dialog.setResultConverter(button -> {
             if (button == confirmButtonType) {
-                return new Livro(livroSelecionado.getId(), campoNome.getText(), 
-                    Double.parseDouble(campoPreco.getText()), campoAutor.getText(), 
-                    campoEditora.getText());
+                livroSelecionado.setNome(campoNome.getText());
+                livroSelecionado.setAutor(campoAutor.getText());
+                livroSelecionado.setEditora(campoEditora.getText());
+                livroSelecionado.setPreco(Double.parseDouble(campoPreco.getText()));
+                return livroSelecionado;
             }
             return null;
         });
@@ -160,9 +162,11 @@ public class SomarProdutosController {
         // Define o resultado do diálogo para um novo Produto com as informações editadas
         dialog.setResultConverter(button -> {
             if (button == confirmButtonType) {
-                return new Computador(computadorSelecionado.getId(), 
-                    campoNome.getText(), Double.parseDouble(campoPreco.getText()), 
-                    campoProcessador.getText(), campoMemoria.getText());
+                computadorSelecionado.setNome(campoNome.getText());
+                computadorSelecionado.setProcessador(campoProcessador.getText());
+                computadorSelecionado.setMemoria(campoMemoria.getText());
+                computadorSelecionado.setPreco(Double.parseDouble(campoPreco.getText()));
+                return computadorSelecionado;
             }
             return null;
         });
